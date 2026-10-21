@@ -1,57 +1,49 @@
 # Qual carro você escolheria?
 
-Mini game de duelos de carros, feito para celular. Escolha 1 de 2 carros; o carro escolhido enfrenta um novo concorrente da mesma categoria, até sobrar um só.
+Mini game de duelos de carros, feito para celular. Escolha 1 de 2 carros; o carro escolhido enfrenta um novo concorrente da mesma classe, até sobrar um só.
+
+As classes seguem as classes de veículos do GTA V: Compactos, Sedãs, SUVs, Cupês, Muscle, Clássicos esportivos, Esportivos, Super, Off-road e Vans.
 
 ## Arquivos
 
-- `index.html`: o jogo inteiro (não precisa de mais nada para rodar).
-- `carros.json`: sua lista de carros com fotos. Começa vazio (`[]`). Enquanto estiver vazio, o jogo usa a lista padrão com ilustrações.
+- `index.html`: o jogo inteiro.
+- `carros.json`: sua lista de carros com fotos. Começa vazio (`[]`). Enquanto estiver vazio, o jogo usa a lista padrão, com ilustrações.
+- `carros.exemplo.json`: exemplo do formato. Os nomes de arquivo dele são candidatos que não foram conferidos; o jogo confere sozinho.
+- `LEIA-ME.md`: este texto. Não precisa subir no repositório.
 
 ## Publicar no GitHub Pages (pelo celular)
 
-1. Abra o repositório `mount-your-carage` no navegador do celular (github.com).
-2. Toque em **Add file** e depois em **Upload files**. Escolha `index.html` e `carros.json` e toque em **Commit changes**. Os dois precisam ficar na pasta principal, não dentro de outra pasta.
-3. Vá em **Settings**, depois **Pages**. Em **Source**, escolha **Deploy from a branch**. Em **Branch**, escolha **main** e a pasta **/(root)**, e toque em **Save**.
-4. Espere alguns minutos. O endereço do jogo será `https://ferrazdeolinet.github.io/mount-your-carage/`.
-
-Se o menu Settings não aparecer, abra o github.com no navegador com a opção "Versão para computador".
+1. Abra o repositório `mount-your-carage` no navegador do celular, com a opção "Versão para computador".
+2. Toque em **Add file → Upload files**, escolha `index.html` e `carros.json` e toque em **Commit changes**. Se já existirem arquivos com esses nomes, o GitHub os substitui.
+3. Em **Settings → Pages**, a fonte deve ser **Deploy from a branch**, **main**, **/(root)**.
+4. O jogo fica em `https://ferrazdeolinet.github.io/mount-your-carage/`. Depois de enviar, espere 1 a 2 minutos e recarregue.
 
 ## Como colocar carros específicos com foto
 
-Edite o `carros.json` no GitHub (toque no arquivo, depois no lápis, cole o conteúdo novo e toque em **Commit changes**). Cada carro é um item da lista:
+Você só informa o **nome do arquivo** da foto na Wikimedia Commons. Quando o jogo abre, ele consulta a Commons, confirma que o arquivo existe e traz a foto, o autor e a licença, que aparecem como crédito abaixo da foto. Se o arquivo não existir, o carro aparece com a ilustração, sem dar erro.
+
+Edite o `carros.json` no GitHub (toque no arquivo, depois no lápis, cole o conteúdo novo e toque em **Commit changes**):
 
 ```json
 [
-  {
-    "categoria": "esportivo",
-    "marca": "Porsche",
-    "modelo": "911 GT3 RS",
-    "detalhe": "992 · 2023",
-    "imagem": "https://commons.wikimedia.org/wiki/Special:FilePath/NOME_EXATO_DO_ARQUIVO.jpg?width=900",
-    "autor": "Nome do fotógrafo",
-    "licenca": "CC BY-SA 4.0",
-    "fonte": "https://commons.wikimedia.org/wiki/File:NOME_EXATO_DO_ARQUIVO.jpg"
-  }
+  { "categoria": "super", "marca": "Audi", "modelo": "R8 V10 plus", "detalhe": "2018",
+    "arquivo": "2018_Audi_R8_Coupe_V10_plus_Front.jpg" }
 ]
 ```
 
-Regras:
+Campos:
 
-- `categoria` aceita: `hatch`, `sedan`, `suv`, `picape`, `esportivo`, `eletrico`. Outro nome cria uma categoria nova.
-- Cada categoria precisa de **pelo menos 4 carros** no arquivo para usar a sua lista. Com menos de 4, o jogo usa a lista padrão daquela categoria.
-- `marca`, `modelo` e `categoria` são obrigatórios. `detalhe` (geração e ano) é opcional.
-- `imagem` precisa começar com `https://`. Se o link estiver quebrado, o jogo mostra a ilustração no lugar, sem dar erro.
-- `autor`, `licenca` e `fonte` são opcionais, mas as licenças da Wikimedia Commons exigem dar o crédito. O jogo mostra o autor e a licença abaixo da foto, e na tela final o crédito vira um link para a página da foto.
-- Opcional: `formato` (`hatch`, `sedan`, `suv`, `picape`, `esportivo`) e `cor` (ex.: `#c1272d`) controlam a ilustração usada quando não há foto.
-
-Depois de salvar o arquivo no GitHub, o jogo leva de 1 a 2 minutos para mostrar a mudança. Se não aparecer, recarregue a página.
+- `categoria`, `marca`, `modelo` e `arquivo` são os principais. `detalhe` (geração e ano) é opcional.
+- `categoria` aceita: `compactos`, `sedas`, `suvs`, `cupes`, `muscle`, `classicos`, `esportivos`, `super`, `offroad`, `vans`. Também aceita os nomes em inglês do GTA (compacts, sedans, coupes, sports classics, sports, super, off-road, vans).
+- O nome do arquivo é o que aparece depois de `File:` na página da foto na Commons. Pode usar espaços ou underscores.
+- Cada classe precisa de **pelo menos 4 carros** no arquivo para usar a sua lista. Com menos de 4, o jogo usa a lista padrão daquela classe.
+- Opcional: `formato` (`hatch`, `sedan`, `suv`, `picape`, `esportivo`, `cupe`, `van`) e `cor` (ex.: `#c1272d`) controlam a ilustração usada quando não há foto.
+- Se preferir informar tudo à mão, use `imagem` (link `https://`), `autor`, `licenca` e `fonte` no lugar de `arquivo`.
 
 ## Texto para pedir a lista a outra IA
 
-> Monte um arquivo JSON (uma lista) com 10 a 12 carros para cada uma destas categorias: hatch, sedan, suv, picape, esportivo, eletrico. Cada item deve ter os campos: categoria, marca, modelo, detalhe (geração e ano, por exemplo "992 · 2023"), imagem, autor, licenca e fonte.
+> Monte um arquivo JSON (uma lista) com 6 a 10 carros reais para cada uma destas classes do GTA V: compactos, sedas, suvs, cupes, muscle, classicos, esportivos, super, offroad, vans. Cada item deve ter os campos: categoria, marca, modelo, detalhe (geração e ano, por exemplo "992 · 2019") e arquivo.
 >
-> A imagem deve ser um arquivo que realmente existe na Wikimedia Commons, no formato `https://commons.wikimedia.org/wiki/Special:FilePath/NOME_EXATO_DO_ARQUIVO.jpg?width=900`. A fonte é a página do arquivo, no formato `https://commons.wikimedia.org/wiki/File:NOME_EXATO_DO_ARQUIVO.jpg`. Autor e licença devem ser os que aparecem nessa página.
->
-> Use só fotos que mostrem o carro inteiro, vistas de fora, e que identifiquem o modelo e a geração. Não invente nomes de arquivo. Se não achar uma foto livre de um modelo, troque por outra geração. Responda somente com o JSON.
+> "arquivo" é o nome exato de uma foto que existe na Wikimedia Commons (o que aparece depois de "File:" na página do arquivo), sem o prefixo "File:". Use só fotos que mostrem o carro inteiro, vistas de fora, e que identifiquem o modelo e a geração. Abra a página de cada arquivo antes de incluir. Não invente nomes: se não achar uma foto livre de um modelo, escolha outra geração ou outro carro. Responda somente com o JSON.
 
-Confira alguns links antes de publicar: abra a `fonte` de cada carro e veja se a foto é mesmo daquele modelo. Outras IAs costumam errar nomes de arquivo.
+Não precisa conferir autor nem licença: o jogo busca isso sozinho.

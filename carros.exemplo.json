@@ -1,0 +1,8 @@
+[
+  { "categoria": "esportivos", "marca": "Toyota", "modelo": "GR Supra", "detalhe": "A90 · 2021", "arquivo": "2021_Toyota_Supra_A90_Fuji_Speedway_Auto.jpg" },
+  { "categoria": "esportivos", "marca": "Nissan", "modelo": "GT-R", "detalhe": "R35", "arquivo": "Nissan_GT-R_(CBA-R35)_front.jpg" },
+  { "categoria": "esportivos", "marca": "Chevrolet", "modelo": "Corvette C8", "detalhe": "2021", "arquivo": "2021_Chevrolet_Corvette_C8.jpg" },
+  { "categoria": "esportivos", "marca": "Ford", "modelo": "Mustang GT", "detalhe": "2018", "arquivo": "2018_Ford_Mustang_GT_(WM67_MWV).jpg" },
+  { "categoria": "super", "marca": "Audi", "modelo": "R8 V10 plus", "detalhe": "2018", "arquivo": "2018_Audi_R8_Coupe_V10_plus_Front.jpg" },
+  { "categoria": "super", "marca": "Lamborghini", "modelo": "Huracán LP 610-4", "detalhe": "2018", "arquivo": "2018_Lamborghini_Huracan_LP_610-4_S-A_(WX18_DMO).jpg" }
+]

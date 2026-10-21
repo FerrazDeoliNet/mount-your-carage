@@ -101,6 +101,7 @@ a { color: var(--accent); }
 .car .body { stroke: var(--outline); stroke-width: 1.4; stroke-linejoin: round; }
 .car .glass { fill: var(--glass); }
 .car .dark { fill: rgba(0, 0, 0, 0.35); }
+.car .ln { fill: none; stroke: rgba(0, 0, 0, 0.35); stroke-width: 1.4; }
 .car .arch { fill: var(--arch); }
 .car .tire { fill: #171a1e; }
 .car .rim { fill: #cfd4da; }
@@ -175,7 +176,7 @@ a { color: var(--accent); }
   font-weight: 600;
   font-size: 15px;
 }
-.count { color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.count { color: var(--ink-2); font-variant-numeric: tabular-nums; text-align: right; }
 .bar { height: 6px; background: var(--surface-2); border-radius: 3px; overflow: hidden; }
 .bar > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width 0.3s; }
 .prompt { font-family: var(--font-display); font-weight: 700; font-size: 34px; line-height: 1; margin: 2px 0 0; text-wrap: balance; }
@@ -268,14 +269,14 @@ a { color: var(--accent); }
 <main>
   <section id="home">
     <h1 class="hero-title">Qual carro você escolheria?</h1>
-    <p class="hero-sub">Escolha uma categoria. Em cada rodada, o carro que você escolher enfrenta um novo concorrente, até sobrar um só.</p>
+    <p class="hero-sub">Escolha uma classe de carro. Em cada rodada, o carro que você escolher enfrenta um novo concorrente, até sobrar um só.</p>
     <div class="tiles" id="tiles"></div>
     <p class="foot" id="foot" hidden>Fotos da Wikimedia Commons. O crédito de cada foto aparece no duelo.</p>
   </section>
 
   <section id="game" hidden>
     <div class="top">
-      <button class="back" id="back" type="button">← Categorias</button>
+      <button class="back" id="back" type="button">← Classes</button>
       <span class="count mono" id="count" aria-live="polite"></span>
     </div>
     <div class="bar" aria-hidden="true"><i id="bar"></i></div>
@@ -286,7 +287,7 @@ a { color: var(--accent); }
 
   <section id="end" hidden>
     <div class="top">
-      <button class="back" id="back2" type="button">← Categorias</button>
+      <button class="back" id="back2" type="button">← Classes</button>
       <span class="count mono" id="endcat"></span>
     </div>
     <div class="win-card" id="win"></div>
@@ -294,46 +295,66 @@ a { color: var(--accent); }
     <ol class="log" id="log"></ol>
     <div class="actions">
       <button class="btn primary" id="again" type="button">Jogar de novo</button>
-      <button class="btn" id="other" type="button">Outra categoria</button>
+      <button class="btn" id="other" type="button">Outra classe</button>
     </div>
   </section>
 </main>
 
 <script>
 (function () {
-  // ---------- Lista padrão (ilustrações) ----------
+  // ---------- Lista padrão (ilustrações), nas classes de veículos do GTA V ----------
   // [marca, modelo, cor da carroceria, formato (opcional)]
   var BASE = [
-    { id: "hatch", nome: "Hatches", desc: "Compactos de dia a dia", shape: "hatch", cars: [
-      ["Fiat", "Argo", "#d23b3b"], ["Volkswagen", "Polo", "#2f5d8a"], ["Chevrolet", "Onix", "#eef1f3"],
-      ["Hyundai", "HB20", "#1f7a8c"], ["Renault", "Kwid", "#e07b00"], ["Peugeot", "208", "#143a73"],
-      ["Toyota", "Yaris", "#9aa1aa"], ["Honda", "Fit", "#7a1f3d"], ["Fiat", "Mobi", "#f2c200"],
-      ["Citroën", "C3", "#6a4fb0"] ] },
-    { id: "sedan", nome: "Sedãs", desc: "Três volumes", shape: "sedan", cars: [
+    { id: "compactos", nome: "Compactos", desc: "Pequenos e ágeis", shape: "hatch", cars: [
+      ["Fiat", "500", "#e6c3b3"], ["Mini", "Cooper", "#1f5f3a"], ["Volkswagen", "Up!", "#f2c200"],
+      ["Fiat", "Uno", "#d23b3b"], ["Honda", "Fit", "#7a1f3d"], ["Renault", "Twingo", "#2f6fa3"],
+      ["Suzuki", "Swift", "#e07b00"], ["Chevrolet", "Onix", "#eef1f3"], ["Hyundai", "HB20", "#1f7a8c"],
+      ["Toyota", "Yaris", "#9aa1aa"] ] },
+    { id: "sedas", nome: "Sedãs", desc: "Três volumes", shape: "sedan", cars: [
       ["Toyota", "Corolla", "#c9ced4"], ["Honda", "Civic", "#1d2a38"], ["Chevrolet", "Cruze", "#a32a2a"],
       ["Volkswagen", "Jetta", "#3d5a73"], ["Nissan", "Sentra", "#7d8791"], ["Hyundai", "Elantra", "#e9ecef"],
       ["Mazda", "3", "#8f1d1d"], ["Kia", "Cerato", "#2b6b5a"], ["Volkswagen", "Virtus", "#d8dce0"],
-      ["Chevrolet", "Onix Plus", "#2f5d8a"] ] },
-    { id: "suv", nome: "SUVs", desc: "Altos e versáteis", shape: "suv", cars: [
+      ["Toyota", "Camry", "#2a2f36"] ] },
+    { id: "suvs", nome: "SUVs", desc: "Altos e versáteis", shape: "suv", cars: [
       ["Jeep", "Compass", "#2c3e2f"], ["Toyota", "Corolla Cross", "#e4e7ea"], ["Hyundai", "Creta", "#c6471f"],
       ["Volkswagen", "T-Cross", "#2f6fa3"], ["Honda", "HR-V", "#8b929b"], ["Chevrolet", "Tracker", "#b33030"],
       ["Nissan", "Kicks", "#e8a40c"], ["Fiat", "Pulse", "#4d3b8a"], ["Renault", "Duster", "#5f6b3a"],
       ["Jeep", "Renegade", "#d98b0b"] ] },
-    { id: "picape", nome: "Picapes", desc: "Cabine e caçamba", shape: "pickup", cars: [
-      ["Fiat", "Toro", "#8a2a2a"], ["Toyota", "Hilux", "#dfe3e6"], ["Ford", "Ranger", "#2b4a7a"],
-      ["Chevrolet", "S10", "#4a5560"], ["Volkswagen", "Amarok", "#1e3a4f"], ["Fiat", "Strada", "#c93a2a"],
-      ["Mitsubishi", "L200 Triton", "#9ba2aa"], ["Nissan", "Frontier", "#7a3a1a"], ["Chevrolet", "Montana", "#e0a210"],
-      ["Ram", "1500", "#1b1f24"] ] },
-    { id: "esportivo", nome: "Esportivos", desc: "Desempenho acima de tudo", shape: "sport", cars: [
-      ["Porsche", "911", "#e0b400"], ["Chevrolet", "Corvette", "#c1272d"], ["Ford", "Mustang", "#2457a6"],
-      ["Nissan", "GT-R", "#aeb4bb"], ["Toyota", "GR Supra", "#e8ebee"], ["BMW", "M3", "#1f6f6a"],
-      ["Audi", "R8", "#4a525b"], ["Lamborghini", "Huracán", "#8bc01f"], ["Mazda", "MX-5", "#9b1c24"],
-      ["Dodge", "Challenger", "#6a2a8c"] ] },
-    { id: "eletrico", nome: "Elétricos", desc: "Sem uma gota de combustível", shape: "hatch", cars: [
-      ["BYD", "Dolphin", "#2d8fbf", "hatch"], ["Tesla", "Model 3", "#c8ccd1", "sedan"], ["BYD", "Seal", "#1d3557", "sedan"],
-      ["Volvo", "EX30", "#8fb0a5", "suv"], ["Hyundai", "Ioniq 5", "#9aa5ad", "suv"], ["Renault", "Kwid E-Tech", "#e9ecef", "hatch"],
-      ["GWM", "Ora 03", "#d9a0b8", "hatch"], ["Nissan", "Leaf", "#e4e7ea", "hatch"], ["Porsche", "Taycan", "#2a2f36", "sport"],
-      ["BYD", "Song Plus", "#7a8b99", "suv"] ] }
+    { id: "cupes", nome: "Cupês", desc: "Duas portas, linha baixa", shape: "coupe", cars: [
+      ["BMW", "Série 4", "#1d2a38"], ["Audi", "A5", "#8f1d1d"], ["Mercedes-Benz", "Classe C Coupé", "#aeb4bb"],
+      ["Toyota", "GR86", "#2f6fa3"], ["Subaru", "BRZ", "#e07b00"], ["Lexus", "RC", "#d8dce0"],
+      ["Nissan", "370Z", "#c9ced4"], ["Audi", "TT", "#4a525b"], ["Hyundai", "Veloster", "#e0b400"],
+      ["Mazda", "RX-8", "#a32a2a"] ] },
+    { id: "muscle", nome: "Muscle", desc: "Força bruta americana", shape: "coupe", cars: [
+      ["Ford", "Mustang GT", "#2457a6"], ["Chevrolet", "Camaro SS", "#e0b400"], ["Dodge", "Challenger", "#6a2a8c"],
+      ["Dodge", "Charger", "#1b1f24"], ["Pontiac", "GTO", "#8f1d1d"], ["Chevrolet", "Chevelle SS", "#1f6f6a"],
+      ["Plymouth", "Barracuda", "#e07b00"], ["Chevrolet", "Nova SS", "#9aa1aa"], ["AMC", "Javelin", "#c1272d"],
+      ["Ford", "Mustang Mach 1", "#f2c200"] ] },
+    { id: "classicos", nome: "Clássicos esportivos", desc: "Esportivos de outra época", shape: "coupe", cars: [
+      ["Porsche", "911", "#c9ced4"], ["Jaguar", "E-Type", "#1f6f3a"], ["Ford", "GT40", "#2b4a7a"],
+      ["Ferrari", "250 GTO", "#c1272d"], ["Aston Martin", "DB5", "#aeb4bb"], ["Mercedes-Benz", "300 SL", "#9aa1aa"],
+      ["Chevrolet", "Corvette C2", "#2f5d8a"], ["Lamborghini", "Miura", "#e07b00"], ["Datsun", "240Z", "#d23b3b"],
+      ["Toyota", "2000GT", "#e8ebee"] ] },
+    { id: "esportivos", nome: "Esportivos", desc: "Desempenho acima de tudo", shape: "sport", cars: [
+      ["Porsche", "911 Carrera", "#e0b400"], ["Nissan", "GT-R", "#aeb4bb"], ["Toyota", "GR Supra", "#e8ebee"],
+      ["BMW", "M4", "#1f6f6a"], ["Mazda", "MX-5", "#9b1c24"], ["Chevrolet", "Corvette C8", "#c1272d"],
+      ["Lotus", "Emira", "#2b6b5a"], ["Alpine", "A110", "#2457a6"], ["Audi", "TT RS", "#8f1d1d"],
+      ["Ford", "Mustang Shelby GT500", "#2a2f36"] ] },
+    { id: "super", nome: "Super", desc: "O topo da pirâmide", shape: "sport", cars: [
+      ["Lamborghini", "Huracán", "#8bc01f"], ["Ferrari", "488", "#c1272d"], ["McLaren", "720S", "#e07b00"],
+      ["Bugatti", "Chiron", "#1d3557"], ["Porsche", "918 Spyder", "#c9ced4"], ["Audi", "R8", "#4a525b"],
+      ["Pagani", "Huayra", "#7a8b99"], ["Lamborghini", "Aventador", "#e0b400"], ["Ford", "GT", "#2457a6"],
+      ["Koenigsegg", "Jesko", "#e8ebee"] ] },
+    { id: "offroad", nome: "Off-road", desc: "Para onde não tem asfalto", shape: "suv", cars: [
+      ["Jeep", "Wrangler", "#d98b0b", "suv"], ["Toyota", "Land Cruiser", "#c9ced4", "suv"], ["Land Rover", "Defender", "#2c3e2f", "suv"],
+      ["Ford", "Bronco", "#2f6fa3", "suv"], ["Suzuki", "Jimny", "#e8a40c", "suv"], ["Mercedes-Benz", "Classe G", "#1b1f24", "suv"],
+      ["Toyota", "Hilux", "#dfe3e6", "pickup"], ["Ford", "Ranger", "#2b4a7a", "pickup"], ["Mitsubishi", "L200 Triton", "#9ba2aa", "pickup"],
+      ["Chevrolet", "S10", "#4a5560", "pickup"] ] },
+    { id: "vans", nome: "Vans", desc: "Espaço de sobra", shape: "van", cars: [
+      ["Volkswagen", "Kombi", "#e6c3b3"], ["Fiat", "Ducato", "#eef1f3"], ["Mercedes-Benz", "Sprinter", "#c9ced4"],
+      ["Ford", "Transit", "#2b4a7a"], ["Renault", "Master", "#e07b00"], ["Peugeot", "Boxer", "#9aa1aa"],
+      ["Volkswagen", "Transporter", "#1f5f3a"], ["Citroën", "Jumpy", "#7a1f3d"], ["Toyota", "HiAce", "#e8ebee"],
+      ["Fiat", "Fiorino", "#d23b3b"] ] }
   ];
 
   // ---------- Ilustrações (vista lateral, frente à direita) ----------
@@ -365,6 +386,17 @@ a { color: var(--accent); }
       glass: "M98 56 Q108 46 126 45 L148 45 Q162 47 172 56 Z",
       hl: [221, 66, 9, 4], tl: [10.5, 66, 5, 5],
       extra: '<path class="dark" d="M10 62 L10 55 L36 55 L36 59 L22 63 Z"/>'
+    },
+    coupe: {
+      body: "M10 78 L10 68 Q10 63 18 62 L48 60 Q62 56 76 50 Q96 36 120 35 L146 35 Q168 36 182 52 L214 58 Q228 61 230 70 L230 78 Q230 82 224 82 L10 82 Z",
+      glass: "M92 50 Q104 40 122 39 L146 39 Q162 41 172 52 Z",
+      hl: [221, 64, 9, 5], tl: [10.5, 64, 5, 5], extra: ""
+    },
+    van: {
+      body: "M10 80 L10 34 Q10 28 18 28 L170 28 Q184 28 192 40 L214 56 Q228 60 228 70 L228 80 Q228 82 222 82 L10 82 Z",
+      glass: "M120 34 L144 34 L144 46 L120 46 Z M150 34 L168 34 Q176 36 182 46 L150 46 Z",
+      hl: [217, 60, 9, 6], tl: [10.5, 40, 4.5, 12],
+      extra: '<path class="ln" d="M60 32 L60 76 M112 32 L112 76"/>'
     }
   };
   var uid = 0;
@@ -402,6 +434,13 @@ a { color: var(--accent); }
   }
   function norm(s) { return String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim(); }
   function isHttps(u) { return typeof u === "string" && /^https:\/\//i.test(u.trim()); }
+  // Texto puro de um trecho de HTML (a Commons devolve o autor com links). O DOMParser não executa nada.
+  function soTexto(h) {
+    try {
+      var t = new DOMParser().parseFromString(String(h || ""), "text/html").body.textContent || "";
+      return t.replace(/\s+/g, " ").trim();
+    } catch (e) { return ""; }
+  }
   function shuffle(a) {
     a = a.slice();
     for (var i = a.length - 1; i > 0; i--) {
@@ -420,28 +459,40 @@ a { color: var(--accent); }
   }
   function buzz() { try { if (navigator.vibrate) navigator.vibrate(12); } catch (e) {} }
 
-  // ---------- Categorias e carros ----------
-  var ALIAS = { hatch: "hatch", hatches: "hatch", sedan: "sedan", sedas: "sedan", suv: "suv", suvs: "suv",
-    picape: "picape", picapes: "picape", pickup: "picape", esportivo: "esportivo", esportivos: "esportivo",
-    sport: "esportivo", eletrico: "eletrico", eletricos: "eletrico" };
-  var SHAPE_ALIAS = { hatch: "hatch", sedan: "sedan", suv: "suv", picape: "pickup", pickup: "pickup", esportivo: "sport", sport: "sport" };
+  // ---------- Classes e carros ----------
+  // Nomes aceitos em "categoria" no carros.json (sem acento, só letras).
+  var ALIAS = {
+    compactos: "compactos", compacto: "compactos", compacts: "compactos", compact: "compactos", hatch: "compactos", hatches: "compactos",
+    sedas: "sedas", seda: "sedas", sedan: "sedas", sedans: "sedas",
+    suv: "suvs", suvs: "suvs",
+    cupes: "cupes", cupe: "cupes", coupe: "cupes", coupes: "cupes",
+    muscle: "muscle", muscles: "muscle",
+    classicos: "classicos", classico: "classicos", classicosesportivos: "classicos", sportsclassics: "classicos", sportclassics: "classicos",
+    esportivos: "esportivos", esportivo: "esportivos", sports: "esportivos", sport: "esportivos",
+    super: "super", supers: "super", supercarros: "super", supercar: "super",
+    offroad: "offroad", offroads: "offroad",
+    van: "vans", vans: "vans"
+  };
+  var SHAPE_ALIAS = { hatch: "hatch", compacto: "hatch", sedan: "sedan", seda: "sedan", suv: "suv", picape: "pickup", pickup: "pickup",
+    esportivo: "sport", sport: "sport", super: "sport", cupe: "coupe", coupe: "coupe", muscle: "coupe", van: "van" };
 
   var CATS = BASE.map(function (cat) {
     return {
       id: cat.id, nome: cat.nome, desc: cat.desc, shape: cat.shape, comFoto: false,
       list: cat.cars.map(function (c) {
-        return { marca: c[0], modelo: c[1], detalhe: "", cor: c[2], shape: c[3] || cat.shape, img: "", autor: "", licenca: "", fonte: "" };
+        return { marca: c[0], modelo: c[1], detalhe: "", cor: c[2], shape: c[3] || cat.shape, arquivo: "", img: "", autor: "", licenca: "", fonte: "" };
       })
     };
   });
 
-  // Aplica o carros.json: categoria com 4 carros ou mais usa só os carros do arquivo.
+  // Aplica o carros.json: classe com 4 carros ou mais usa só os carros do arquivo.
+  // Retorna a lista dos carros que precisam buscar foto pelo nome do arquivo.
   function applyJson(data) {
     var arr = Array.isArray(data) ? data : (data && Array.isArray(data.carros) ? data.carros : []);
-    var groups = {};
+    var groups = {}, pend = [];
     arr.forEach(function (it) {
       if (!it || !it.marca || !it.modelo || !it.categoria) return;
-      var raw = norm(it.categoria), id = ALIAS[raw] || raw.replace(/[^a-z0-9]+/g, "-");
+      var raw = norm(it.categoria).replace(/[^a-z]/g, ""), id = ALIAS[raw] || raw;
       if (!id) return;
       (groups[id] = groups[id] || []).push(it);
     });
@@ -453,17 +504,58 @@ a { color: var(--accent); }
         CATS.push(cat);
       }
       cat.list = groups[id].map(function (it) {
-        return {
+        var car = {
           marca: String(it.marca), modelo: String(it.modelo), detalhe: String(it.detalhe || ""),
           cor: /^#[0-9a-f]{3,8}$/i.test(it.cor || "") ? it.cor : "#8a96a3",
           shape: SHAPE_ALIAS[norm(it.formato)] || cat.shape,
+          arquivo: String(it.arquivo || ""),
           img: isHttps(it.imagem) ? it.imagem.trim() : "",
           autor: String(it.autor || ""), licenca: String(it.licenca || ""),
           fonte: isHttps(it.fonte) ? it.fonte.trim() : ""
         };
+        if (car.arquivo && !car.img) pend.push(car);
+        return car;
       });
       cat.comFoto = cat.list.some(function (c) { return c.img; });
     });
+    return pend;
+  }
+
+  // Consulta a Commons: confirma que o arquivo existe e traz a foto, o autor e a licença.
+  function tituloArquivo(n) {
+    return "File:" + String(n).replace(/^\s*(file|arquivo|ficheiro):/i, "").replace(/_/g, " ").trim();
+  }
+  function buscarFotos(cars) {
+    if (!cars.length || !window.fetch) return Promise.resolve();
+    var porTitulo = {};
+    cars.forEach(function (c) { var t = tituloArquivo(c.arquivo); (porTitulo[t] = porTitulo[t] || []).push(c); });
+    var titulos = Object.keys(porTitulo), lotes = [];
+    for (var i = 0; i < titulos.length; i += 40) lotes.push(titulos.slice(i, i + 40));
+    return Promise.all(lotes.map(function (lote) {
+      var url = "https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&redirects=1" +
+        "&prop=imageinfo&iiprop=url%7Cextmetadata&iiurlwidth=900&titles=" + encodeURIComponent(lote.join("|"));
+      return fetch(url).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+        if (!j || !j.query) return;
+        var norms = {}, reds = {}, pages = {};
+        (j.query.normalized || []).forEach(function (n) { norms[n.from] = n.to; });
+        (j.query.redirects || []).forEach(function (r) { reds[r.from] = r.to; });
+        Object.keys(j.query.pages || {}).forEach(function (k) { var p = j.query.pages[k]; pages[p.title] = p; });
+        lote.forEach(function (t) {
+          var x = norms[t] || t; x = reds[x] || x;
+          var p = pages[x];
+          if (!p || p.missing !== undefined || !p.imageinfo || !p.imageinfo[0]) return;
+          var info = p.imageinfo[0], md = info.extmetadata || {};
+          var foto = info.thumburl || info.url;
+          if (!isHttps(foto)) return;
+          var autor = soTexto(md.Artist && md.Artist.value) || "autor desconhecido";
+          var lic = soTexto(md.LicenseShortName && md.LicenseShortName.value);
+          porTitulo[t].forEach(function (c) {
+            c.img = foto; c.autor = autor.slice(0, 80); c.licenca = lic;
+            c.fonte = isHttps(info.descriptionurl) ? info.descriptionurl : "";
+          });
+        });
+      }).catch(function () {});
+    }));
   }
 
   // ---------- Peças de interface ----------
@@ -529,7 +621,7 @@ a { color: var(--accent); }
 
   function renderDuel() {
     st.locked = false;
-    $("count").textContent = "Rodada " + (st.round + 1) + " de " + st.total;
+    $("count").textContent = st.cat.nome + " · Rodada " + (st.round + 1) + " de " + st.total;
     $("bar").style.width = (st.round / st.total * 100) + "%";
     $("hint").textContent = st.round === 0
       ? "Toque no carro que você levaria para casa."
@@ -613,7 +705,15 @@ a { color: var(--accent); }
   if (window.fetch) {
     fetch("carros.json", { cache: "no-cache" })
       .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (d) { if (d) { applyJson(d); if (!$("home").hidden) renderHome(); } })
+      .then(function (d) {
+        if (!d) return;
+        var pend = applyJson(d);
+        if (!$("home").hidden) renderHome();
+        return buscarFotos(pend).then(function () {
+          CATS.forEach(function (c) { c.comFoto = c.list.some(function (x) { return x.img; }); });
+          if (!$("home").hidden) renderHome();
+        });
+      })
       .catch(function () {});
   }
 })();
